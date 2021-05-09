@@ -31,7 +31,7 @@
  
     - name: Git clone ( for public repo ) 
       git:
-        repo: https://gitlab.com/Yohann76/Ansible-Deploy-Docker-Symfony
+        repo: https://github.com/Yohann76/Ansible-Deploy-Docker-Symfony
         dest: "{{ symfony_root_dir }}"
         force: yes
         clone: yes
