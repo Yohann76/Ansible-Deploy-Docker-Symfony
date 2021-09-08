@@ -28,8 +28,17 @@
       apt:
         name: git
         state: latest
- 
-    - name: Git clone ( for public repo ) 
+
+
+
+    - name: delete old folders
+      become: true
+      file:
+        state: absent
+        path: "{{ symfony_root_dir }}/"
+
+
+    - name: Git clone ( for public repo )
       git:
         repo: https://github.com/Yohann76/Ansible-Deploy-Docker-Symfony
         dest: "{{ symfony_root_dir }}"
@@ -43,36 +52,47 @@
         state: directory
         mode: 0777
         recurse: yes
-    
+
     - name: Fix bin/console permissions
       become: true
       file:
         path: "{{ symfony_console_path }}"
         mode: 0777
 
+
+    - name: Fix var directory permissions
+      become: true
+      file:
+        path: "{{ symfony_root_dir }}"
+        state: directory
+        mode: 0777
+        recurse: yes
+
     ###### DOCKER ######
 
     - name: Install pip
       apt: name=python-pip state=present
-      
+
     - name: install docker-py
       pip: name=docker-py
-  
+
     - name: build docker
-      command: '{{ symfony_console_path }} docker-compose build'
+      become: true
+      command: '{{ symfony_root_dir }} docker-compose build'
+      #command: '{{ symfony_root_dir }} docker-compose up -d'
 
     #- name: Build Docker image from Dockerfile
       #docker_image:
         #name: web
         #path: docker
         #state: build
-    
+
     #- name: Running the container
       #docker_container:
         #image: web:latest
         #path: docker
         #state: running
-        
+
     #- name: Check if container is running
       #shell: docker ps
 
